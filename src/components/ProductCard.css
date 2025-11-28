@@ -1,0 +1,262 @@
+/* ============================================
+   PRODUCT CARD - Modern E-commerce
+   Single button: Price → Add to Cart on hover
+   ============================================ */
+
+.product-card {
+    position: relative;
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(25, 26, 35, 0.06);
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    border-color: rgba(185, 255, 102, 0.2);
+}
+
+/* ========== IMAGE SECTION ========== */
+.product-image-wrapper {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--grey);
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.1);
+}
+
+.product-emoji {
+    font-size: 80px;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+}
+
+/* ========== BADGE ========== */
+.product-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    animation: slideInLeft 0.4s ease-out;
+}
+
+.badge-new {
+    background: rgba(185, 255, 102, 0.95);
+    color: var(--dark);
+    box-shadow: 0 4px 12px rgba(185, 255, 102, 0.3);
+}
+
+.badge-sale {
+    background: rgba(239, 68, 68, 0.95);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.badge-popular {
+    background: rgba(234, 179, 8, 0.95);
+    color: var(--dark);
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
+}
+
+/* ========== PRODUCT INFO ========== */
+.product-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-category {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #999;
+}
+
+.product-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 48px;
+}
+
+/* ========== RATING ========== */
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.star-filled {
+    color: #fbbf24;
+}
+
+.star-empty {
+    color: #e5e7eb;
+}
+
+.reviews-count {
+    font-size: 13px;
+    color: #999;
+}
+
+/* ========== MORPHING PRICE BUTTON ========== */
+.price-button {
+    position: relative;
+    width: 100%;
+    height: 44px;
+    margin-top: 12px;
+    background: var(--white);
+    border: 2px solid var(--dark);
+    border-radius: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px 0px var(--dark);
+}
+
+.price-button:hover {
+    background: var(--dark);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--green);
+}
+
+.price-button:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0px var(--green);
+}
+
+/* Price Content (default state) */
+.price-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 1;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.price-button:hover .price-content {
+    opacity: 0;
+    transform: translateY(-5px);
+}
+
+.price-content .current-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dark);
+    transition: color 0.3s ease;
+}
+
+.price-content .original-price {
+    font-size: 16px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+/* Cart Content (appears on button hover) - PERFECTLY CENTERED */
+.cart-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.price-button:hover .cart-content {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+.cart-content svg {
+    stroke: currentColor;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+
+.cart-content span {
+    line-height: 1;
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .product-emoji {
+        font-size: 60px;
+    }
+
+    .product-name {
+        font-size: 16px;
+        min-height: 42px;
+    }
+
+    .price-button {
+        height: 40px;
+    }
+
+    .price-content .current-price {
+        font-size: 20px;
+    }
+
+    .cart-content {
+        font-size: 12px;
+        gap: 4px;
+    }
+}

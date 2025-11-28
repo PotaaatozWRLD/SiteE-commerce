@@ -1,0 +1,114 @@
+/* ============================================
+   MODERN BUTTON STYLES
+   Style "Positivus Authentic" - Neo-Brutalist
+   Design correspondant à la charte Figma Positivus
+   ============================================ */
+
+.login-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    /* Taille très réduite */
+    background-color: #B9FF66;
+    /* Vert Lime Positivus */
+    color: #191A23;
+    /* Noir Positivus */
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    /* Police réduite */
+    border: 1.5px solid #191A23;
+    /* Bordure affinée */
+    border-radius: 10px;
+    /* Radius ajusté */
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 3px 3px 0px #191A23;
+    /* Ombre réduite */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.login-button svg {
+    width: 16px;
+    /* Icône réduite */
+    height: 16px;
+    transition: transform 0.3s ease;
+    stroke-width: 2px;
+}
+
+/* Hover Effect: Le bouton bouge un peu mais GARDE sa couleur */
+.login-button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #191A23 !important;
+    /* Force l'ombre noire */
+    background-color: #B9FF66 !important;
+    /* Force la couleur originale */
+    color: #191A23 !important;
+}
+
+/* Active Effect: Le bouton s'enfonce */
+.login-button:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px #191A23;
+}
+
+/* ========== BOUTON SECONDAIRE (Noir) ========== */
+.secondary-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    /* Taille très réduite */
+    background-color: #191A23;
+    /* Noir Positivus */
+    color: #FFFFFF;
+    /* Blanc */
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    /* Police réduite */
+    border: 1.5px solid #191A23;
+    /* Bordure affinée */
+    border-radius: 10px;
+    /* Radius ajusté */
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 3px 3px 0px #B9FF66;
+    /* Ombre réduite */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.secondary-button svg {
+    width: 16px;
+    /* Icône réduite */
+    height: 16px;
+    transition: transform 0.3s ease;
+    stroke-width: 2px;
+}
+
+/* Hover Effect: Le bouton bouge un peu mais GARDE sa couleur */
+.secondary-button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #B9FF66 !important;
+    /* Force l'ombre verte */
+    background-color: #191A23 !important;
+    /* Force la couleur originale */
+    color: #FFFFFF !important;
+}
+
+.secondary-button:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px #B9FF66;
+}
+
+/* Focus pour accessibilité */
+.login-button:focus-visible,
+.secondary-button:focus-visible {
+    outline: 2px solid #191A23;
+    outline-offset: 2px;
+}

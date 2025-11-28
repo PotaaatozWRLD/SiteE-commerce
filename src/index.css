@@ -1,0 +1,64 @@
+/* ============================================
+   POSITIVUS TEMPLATE - React + Vite
+   Modern Islamic E-commerce
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Positivus Colors */
+:root {
+  --green: #B9FF66;
+  --dark: #191A23;
+  --grey: #F3F3F3;
+  --white: #FFFFFF;
+  --black: #000000;
+}
+
+/* Body */
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  line-height: 1.28;
+  color: var(--black);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Typography */
+h1 {
+  font-size: clamp(43px, 6vw, 60px);
+  font-weight: 500;
+  line-height: 1.28;
+}
+
+h2 {
+  font-size: clamp(36px, 4vw, 40px);
+  font-weight: 500;
+  line-height: 1.28;
+}
+
+h3 {
+  font-size: clamp(26px, 3vw, 30px);
+  font-weight: 500;
+  line-height: 1.27;
+}
+
+p {
+  font-size: 18px;
+  line-height: 1.28;
+}
