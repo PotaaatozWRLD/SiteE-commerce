@@ -7,7 +7,7 @@ export default function AdminLayout() {
     const { signOut, user } = useAuth()
     const location = useLocation()
     const navigate = useNavigate()
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+    const [isSidebarOpen] = useState(false)
 
     const handleSignOut = async () => {
         await signOut()

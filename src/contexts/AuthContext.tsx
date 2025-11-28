@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { supabase, type Profile } from '../lib/supabase'
 import type { User } from '@supabase/supabase-js'
 
@@ -19,6 +20,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        // Safety timeout to prevent infinite loading
+        const timer = setTimeout(() => {
+            setLoading(false)
+        }, 3000)
+
         // Check active session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user ?? null)
@@ -27,6 +33,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             } else {
                 setLoading(false)
             }
+        }).catch(err => {
+            console.error('Auth session error:', err)
+            setLoading(false)
         })
 
         // Listen for auth changes
@@ -42,7 +51,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
         })
 
-        return () => subscription.unsubscribe()
+        return () => {
+            subscription.unsubscribe()
+            clearTimeout(timer)
+        }
     }, [])
 
     async function fetchProfile(userId: string) {

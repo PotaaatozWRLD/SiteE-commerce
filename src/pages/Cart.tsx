@@ -105,13 +105,13 @@ export default function Cart() {
                                 <span className="total-value">{total.toFixed(2)} €</span>
                             </div>
 
-                            <button className="checkout-btn">
+                            <Link to="/checkout" className="checkout-btn" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5z" />
                                     <path d="M6 9.01V9" />
                                 </svg>
                                 Passer la commande
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

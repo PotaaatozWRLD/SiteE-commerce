@@ -1,8 +1,31 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import type { Order } from '../../hooks/useOrders'
 import './Dashboard.css'
+
+interface OrderItem {
+    id: string
+    quantity: number
+    price_at_purchase: number
+    product: {
+        name: string
+        image_url: string
+    }
+}
+
+interface Order {
+    id: string
+    created_at: string
+    total_amount: number
+    status: string
+    payment_method: string
+    payment_id: string
+    shipping_name: string
+    shipping_address: string
+    shipping_city: string
+    shipping_zip: string
+    items: OrderItem[]
+}
 
 export default function OrderDetails() {
     const { id } = useParams()
@@ -12,183 +35,170 @@ export default function OrderDetails() {
     const [updating, setUpdating] = useState(false)
 
     useEffect(() => {
-        fetchOrder()
+        if (id) fetchOrderDetails()
     }, [id])
 
-    async function fetchOrder() {
+    const fetchOrderDetails = async () => {
         try {
-            const { data, error } = await supabase
+            // Fetch order info
+            const { data: orderData, error: orderError } = await supabase
                 .from('orders')
-                .select(`
-                    *,
-                    items:order_items(
-                        *,
-                        product:products(name, image_url)
-                    )
-                `)
+                .select('*')
                 .eq('id', id)
                 .single()
 
-            if (error) throw error
+            if (orderError) throw orderError
 
-            // Fetch user
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('email, full_name, phone')
-                .eq('id', data.user_id)
-                .single()
+            // Fetch order items with product details
+            const { data: itemsData, error: itemsError } = await supabase
+                .from('order_items')
+                .select(`
+                    *,
+                    product:products(name, image_url)
+                `)
+                .eq('order_id', id)
 
-            setOrder({
-                ...data,
-                user: profile || { email: 'Unknown' }
-            })
+            if (itemsError) throw itemsError
+
+            setOrder({ ...orderData, items: itemsData })
         } catch (error) {
-            console.error('Error fetching order:', error)
-            alert('Erreur lors du chargement de la commande')
-            navigate('/admin/orders')
+            console.error('Error fetching order details:', error)
+            alert('Erreur chargement commande')
         } finally {
             setLoading(false)
         }
     }
 
     const updateStatus = async (newStatus: string) => {
-        if (!order) return
+        if (!confirm(`Passer la commande en "${newStatus}" ?`)) return
+
         setUpdating(true)
         try {
             const { error } = await supabase
                 .from('orders')
                 .update({ status: newStatus })
-                .eq('id', order.id)
+                .eq('id', id)
 
             if (error) throw error
 
-            setOrder({ ...order, status: newStatus as any })
-        } catch (error: any) {
-            alert('Erreur lors de la mise à jour: ' + error.message)
+            // Refresh local state
+            if (order) setOrder({ ...order, status: newStatus })
+
+        } catch (error) {
+            console.error('Error updating status:', error)
+            alert('Erreur mise à jour statut')
         } finally {
             setUpdating(false)
         }
     }
 
-    if (loading) return <div className="p-8">Chargement...</div>
-    if (!order) return <div className="p-8">Commande introuvable</div>
-
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('fr-FR', {
-            style: 'currency',
-            currency: 'EUR'
-        }).format(price)
-    }
+    if (loading) return <div className="admin-container">Chargement...</div>
+    if (!order) return <div className="admin-container">Commande introuvable</div>
 
     return (
-        <div className="dashboard-container">
-            <div className="section-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <button
-                        onClick={() => navigate('/admin/orders')}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' }}
-                    >
-                        ←
-                    </button>
-                    <h2 className="admin-section-title">Commande #{order.id.slice(0, 8)}</h2>
-                    <span className={`status-badge ${order.status}`} style={{ fontSize: '14px', padding: '6px 12px' }}>
-                        {order.status}
-                    </span>
+        <div className="admin-container">
+            <div style={{ marginBottom: '20px' }}>
+                <button
+                    onClick={() => navigate('/admin/orders')}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                    ← Retour aux commandes
+                </button>
+            </div>
+
+            <div className="admin-header">
+                <div>
+                    <h1 className="admin-title">Commande #{order.id.slice(0, 8)}</h1>
+                    <p style={{ color: '#666' }}>
+                        Passée le {new Date(order.created_at).toLocaleString('fr-FR')}
+                    </p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    <select
-                        value={order.status}
-                        onChange={(e) => updateStatus(e.target.value)}
-                        disabled={updating}
-                        style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #e5e7eb', background: '#fff', cursor: 'pointer' }}
-                    >
-                        <option value="pending">En attente</option>
-                        <option value="paid">Payée</option>
-                        <option value="shipped">Expédiée</option>
-                        <option value="delivered">Livrée</option>
-                        <option value="cancelled">Annulée</option>
-                    </select>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    {order.status === 'paid' && (
+                        <button
+                            className="btn-primary"
+                            onClick={() => updateStatus('shipped')}
+                            disabled={updating}
+                            style={{ background: '#00BFFF' }}
+                        >
+                            Marquer comme Expédié 🚚
+                        </button>
+                    )}
+                    {order.status === 'shipped' && (
+                        <button
+                            className="btn-primary"
+                            onClick={() => updateStatus('delivered')}
+                            disabled={updating}
+                            style={{ background: '#B9FF66', color: '#000' }}
+                        >
+                            Marquer comme Livré ✅
+                        </button>
+                    )}
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-                {/* Order Items */}
-                <div className="recent-orders" style={{ height: 'fit-content' }}>
-                    <div className="section-header">
-                        <h3 style={{ fontSize: '16px', fontWeight: 600 }}>Articles</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
+
+                {/* Left: Items */}
+                <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #eee' }}>
+                    <h3 className="admin-section-title">Articles ({order.items.length})</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        {order.items.map((item: any) => (
+                            <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', paddingBottom: '15px', borderBottom: '1px solid #f0f0f0' }}>
+                                <img
+                                    src={item.product?.image_url || 'https://via.placeholder.com/50'}
+                                    alt={item.product?.name}
+                                    style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }}
+                                />
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: 'bold' }}>{item.product?.name || 'Produit supprimé'}</div>
+                                    <div style={{ color: '#666' }}>Qté: {item.quantity} x {item.price_at_purchase} €</div>
+                                </div>
+                                <div style={{ fontWeight: 'bold' }}>
+                                    {(item.quantity * item.price_at_purchase).toFixed(2)} €
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                    <div className="table-container">
-                        <table className="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Produit</th>
-                                    <th>Prix</th>
-                                    <th>Qté</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {order.items?.map((item) => (
-                                    <tr key={item.id}>
-                                        <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                <div style={{ width: '40px', height: '40px', background: '#f3f4f6', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    {item.product?.image_url?.startsWith('http') ? (
-                                                        <img src={item.product.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} />
-                                                    ) : (
-                                                        item.product?.image_url || '📦'
-                                                    )}
-                                                </div>
-                                                <span>{item.product?.name || 'Produit supprimé'}</span>
-                                            </div>
-                                        </td>
-                                        <td>{formatPrice(item.price)}</td>
-                                        <td>x{item.quantity}</td>
-                                        <td style={{ fontWeight: 600 }}>{formatPrice(item.price * item.quantity)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colSpan={3} style={{ textAlign: 'right', padding: '16px', fontWeight: 600 }}>Total</td>
-                                    <td style={{ padding: '16px', fontWeight: 700, fontSize: '18px' }}>{formatPrice(order.total)}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                    <div style={{ marginTop: '20px', textAlign: 'right', fontSize: '18px', fontWeight: 'bold' }}>
+                        Total: {order.total_amount.toFixed(2)} €
                     </div>
                 </div>
 
-                {/* Customer Info */}
-                <div className="recent-orders" style={{ height: 'fit-content' }}>
-                    <div className="section-header">
-                        <h3 style={{ fontSize: '16px', fontWeight: 600 }}>Client</h3>
-                    </div>
-                    <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <div>
-                            <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Nom complet</div>
-                            <div style={{ fontWeight: 500 }}>{order.user?.full_name || 'N/A'}</div>
+                {/* Right: Customer Info */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                    <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #eee' }}>
+                        <h3 className="admin-section-title">Client</h3>
+                        <div style={{ marginBottom: '10px' }}>
+                            <strong>Nom:</strong> {order.shipping_name}
                         </div>
-                        <div>
-                            <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Email</div>
-                            <div style={{ fontWeight: 500 }}>{order.user?.email}</div>
-                        </div>
-                        <div>
-                            <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Adresse de livraison</div>
-                            <div style={{ fontWeight: 500, lineHeight: '1.5' }}>
-                                {order.shipping_address ? (
-                                    <>
-                                        {order.shipping_address.line1}<br />
-                                        {order.shipping_address.city}, {order.shipping_address.postal_code}<br />
-                                        {order.shipping_address.country}
-                                    </>
-                                ) : (
-                                    'Non renseignée'
-                                )}
-                            </div>
+                        <div style={{ marginBottom: '10px' }}>
+                            <strong>Adresse:</strong><br />
+                            {order.shipping_address}<br />
+                            {order.shipping_zip} {order.shipping_city}
                         </div>
                     </div>
+
+                    <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #eee' }}>
+                        <h3 className="admin-section-title">Paiement</h3>
+                        <div style={{ marginBottom: '10px' }}>
+                            <strong>Méthode:</strong> <span style={{ textTransform: 'capitalize' }}>{order.payment_method}</span>
+                        </div>
+                        <div style={{ marginBottom: '10px' }}>
+                            <strong>ID Transaction:</strong><br />
+                            <span style={{ fontFamily: 'monospace', fontSize: '12px', wordBreak: 'break-all' }}>
+                                {order.payment_id}
+                            </span>
+                        </div>
+                        <div style={{ marginBottom: '10px' }}>
+                            <strong>Statut:</strong> <span style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{order.status}</span>
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
         </div>
     )

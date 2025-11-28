@@ -11,11 +11,13 @@ import ProductDetails from './pages/ProductDetails'
 import AdminLogin from './pages/admin/AdminLogin'
 import ProtectedRoute from './components/admin/ProtectedRoute'
 import AdminLayout from './components/admin/AdminLayout'
-import Dashboard from './pages/admin/Dashboard'
-import Products from './pages/admin/Products'
+import AdminDashboard from './pages/admin/Dashboard'
+import AdminProducts from './pages/admin/Products'
 import ProductForm from './pages/admin/ProductForm'
-import Orders from './pages/admin/Orders'
-import OrderDetails from './pages/admin/OrderDetails'
+import AdminOrders from './pages/admin/Orders'
+import AdminOrderDetails from './pages/admin/OrderDetails'
+import Checkout from './pages/Checkout'
+import OrderConfirmation from './pages/OrderConfirmation'
 import './App.css'
 
 // Homepage component
@@ -42,20 +44,22 @@ function Layout() {
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
           <Route path="/products/:id" element={<ProductDetails />} />
 
           {/* Admin login (public) */}
           <Route path="/admin/login" element={<AdminLogin />} />
 
           {/* Protected admin routes */}
-          <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<ProtectedRoute />}>
             <Route element={<AdminLayout />}>
-              <Route path="/admin" element={<Dashboard />} />
-              <Route path="/admin/products" element={<Products />} />
-              <Route path="/admin/products/new" element={<ProductForm />} />
-              <Route path="/admin/products/:id" element={<ProductForm />} />
-              <Route path="/admin/orders" element={<Orders />} />
-              <Route path="/admin/orders/:id" element={<OrderDetails />} />
+              <Route index element={<AdminDashboard />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="products/new" element={<ProductForm />} />
+              <Route path="products/edit/:id" element={<ProductForm />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="orders/:id" element={<AdminOrderDetails />} />
             </Route>
           </Route>
         </Routes>
