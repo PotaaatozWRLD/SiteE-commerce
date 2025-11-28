@@ -13,7 +13,6 @@ export default function Products() {
         if (!productToDelete) return
 
         const id = productToDelete
-        console.log('✅ Delete confirmed via modal, deleting:', id)
 
         try {
             setDeleteLoading(id)
@@ -24,7 +23,6 @@ export default function Products() {
             refetch()
             setProductToDelete(null)
         } catch (err: any) {
-            console.error('❌ Error during deletion:', err)
             alert('Erreur lors de la suppression: ' + err.message)
         } finally {
             setDeleteLoading(null)
