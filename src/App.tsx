@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
 import Navigation from './components/Navigation'
@@ -13,16 +13,54 @@ import ProtectedRoute from './components/admin/ProtectedRoute'
 import AdminLayout from './components/admin/AdminLayout'
 import Dashboard from './pages/admin/Dashboard'
 import Products from './pages/admin/Products'
+import ProductForm from './pages/admin/ProductForm'
+import Orders from './pages/admin/Orders'
+import OrderDetails from './pages/admin/OrderDetails'
 import './App.css'
 
 // Homepage component
-function HomePage() {
+function Homepage() {
   return (
     <>
-      <Navigation />
       <Hero />
       <FeaturedProducts />
-      <Footer />
+    </>
+  )
+}
+
+// Layout wrapper to conditionally render Navigation and Footer
+function Layout() {
+  const location = useLocation()
+  const isAdminRoute = location.pathname.startsWith('/admin')
+
+  return (
+    <>
+      {!isAdminRoute && <Navigation />}
+      <div className="app">
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+
+          {/* Admin login (public) */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          {/* Protected admin routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route path="/admin" element={<Dashboard />} />
+              <Route path="/admin/products" element={<Products />} />
+              <Route path="/admin/products/new" element={<ProductForm />} />
+              <Route path="/admin/products/:id" element={<ProductForm />} />
+              <Route path="/admin/orders" element={<Orders />} />
+              <Route path="/admin/orders/:id" element={<OrderDetails />} />
+            </Route>
+          </Route>
+        </Routes>
+        {!isAdminRoute && <Footer />}
+      </div>
     </>
   )
 }
@@ -32,32 +70,7 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <Router>
-          <div className="app">
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<HomePage />} />
-
-              {/* Customer login */}
-              <Route path="/login" element={<Login />} />
-
-              {/* Shopping Cart */}
-              <Route path="/cart" element={<Cart />} />
-
-              {/* Product Details */}
-              <Route path="/products/:id" element={<ProductDetails />} />
-
-              {/* Admin login */}
-              <Route path="/admin/login" element={<AdminLogin />} />
-
-              {/* Protected admin routes */}
-              <Route element={<ProtectedRoute />}>
-                <Route element={<AdminLayout />}>
-                  <Route path="/admin" element={<Dashboard />} />
-                  <Route path="/admin/products" element={<Products />} />
-                </Route>
-              </Route>
-            </Routes>
-          </div>
+          <Layout />
         </Router>
       </CartProvider>
     </AuthProvider>

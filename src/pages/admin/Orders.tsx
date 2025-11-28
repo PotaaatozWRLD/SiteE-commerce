@@ -19,7 +19,7 @@ export default function Orders() {
     return (
         <div className="dashboard-container">
             <div className="section-header">
-                <h2 className="section-title">Commandes ({orders.length})</h2>
+                <h2 className="admin-section-title">Commandes ({orders.length})</h2>
             </div>
 
             <div className="recent-orders">

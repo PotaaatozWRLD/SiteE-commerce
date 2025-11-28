@@ -190,12 +190,13 @@
     text-decoration: line-through;
 }
 
-/* Cart Content (appears on button hover) - PERFECTLY CENTERED */
-.cart-content {
+/* Product Cart Content (renamed to avoid conflict with Cart.css) */
+.product-cart-content {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -204,23 +205,25 @@
     font-size: 14px;
     font-weight: 600;
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease;
+    text-align: center;
 }
 
-.price-button:hover .cart-content {
+.price-button:hover .product-cart-content {
     opacity: 1;
-    transform: translate(-50%, -50%);
 }
 
-.cart-content svg {
+.product-cart-content svg {
     stroke: currentColor;
     flex-shrink: 0;
     width: 18px;
     height: 18px;
+    margin-top: -1px;
 }
 
-.cart-content span {
-    line-height: 1;
+.product-cart-content span {
+    line-height: 18px;
+    margin-top: 1px;
 }
 
 /* ========== ANIMATIONS ========== */
@@ -255,7 +258,7 @@
         font-size: 20px;
     }
 
-    .cart-content {
+    .product-cart-content {
         font-size: 12px;
         gap: 4px;
     }

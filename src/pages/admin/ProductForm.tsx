@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { createProduct, updateProduct, useProduct } from '../../hooks/useProducts'
 import './Dashboard.css'
 
 export default function ProductForm() {
@@ -9,8 +10,10 @@ export default function ProductForm() {
     const isEditMode = !!id
 
     const [loading, setLoading] = useState(false)
-    const [fetchLoading, setFetchLoading] = useState(isEditMode)
     const [categories, setCategories] = useState<any[]>([])
+
+    // Use useProduct hook for editing
+    const { product, loading: fetchLoading } = useProduct(id)
 
     const [formData, setFormData] = useState({
         name: '',
@@ -25,44 +28,27 @@ export default function ProductForm() {
 
     useEffect(() => {
         fetchCategories()
-        if (isEditMode) {
-            fetchProduct()
+    }, [])
+
+    // Update form when product loads
+    useEffect(() => {
+        if (product) {
+            setFormData({
+                name: product.name,
+                description: product.description || '',
+                price: product.price.toString(),
+                original_price: product.original_price?.toString() || '',
+                stock: product.stock.toString(),
+                category_id: product.category_id || '',
+                image_url: product.image_url || '',
+                badge: product.badge || ''
+            })
         }
-    }, [id])
+    }, [product])
 
     async function fetchCategories() {
         const { data } = await supabase.from('categories').select('*')
         if (data) setCategories(data)
-    }
-
-    async function fetchProduct() {
-        try {
-            const { data, error } = await supabase
-                .from('products')
-                .select('*')
-                .eq('id', id)
-                .single()
-
-            if (error) throw error
-            if (data) {
-                setFormData({
-                    name: data.name,
-                    description: data.description || '',
-                    price: data.price.toString(),
-                    original_price: data.original_price?.toString() || '',
-                    stock: data.stock.toString(),
-                    category_id: data.category_id || '',
-                    image_url: data.image_url || '',
-                    badge: data.badge || ''
-                })
-            }
-        } catch (error) {
-            console.error('Error fetching product:', error)
-            alert('Erreur lors du chargement du produit')
-            navigate('/admin/products')
-        } finally {
-            setFetchLoading(false)
-        }
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -70,7 +56,7 @@ export default function ProductForm() {
         setLoading(true)
 
         try {
-            const productData = {
+            const productData: any = {
                 name: formData.name,
                 slug: formData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
                 description: formData.description,
@@ -83,17 +69,12 @@ export default function ProductForm() {
                 is_active: true
             }
 
-            if (isEditMode) {
-                const { error } = await supabase
-                    .from('products')
-                    .update(productData)
-                    .eq('id', id)
-                if (error) throw error
+            if (isEditMode && id) {
+                const { error } = await updateProduct(id, productData)
+                if (error) throw new Error(error)
             } else {
-                const { error } = await supabase
-                    .from('products')
-                    .insert([productData])
-                if (error) throw error
+                const { error } = await createProduct(productData)
+                if (error) throw new Error(error)
             }
 
             navigate('/admin/products')
@@ -115,7 +96,7 @@ export default function ProductForm() {
     return (
         <div className="dashboard-container" style={{ maxWidth: '800px' }}>
             <div className="section-header">
-                <h2 className="section-title">{isEditMode ? 'Modifier le produit' : 'Nouveau produit'}</h2>
+                <h2 className="admin-section-title">{isEditMode ? 'Modifier le produit' : 'Nouveau produit'}</h2>
             </div>
 
             <div className="recent-orders" style={{ padding: '32px' }}>

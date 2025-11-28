@@ -1,29 +1,30 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useProducts } from '../../hooks/useProducts'
-import { supabase } from '../../lib/supabase'
+import { useProducts, deleteProduct } from '../../hooks/useProducts'
 import './Dashboard.css' // Reuse dashboard styles for table
 
 export default function Products() {
     const { products, loading, error, refetch } = useProducts()
     const navigate = useNavigate()
     const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
+    const [productToDelete, setProductToDelete] = useState<string | null>(null)
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return
+    const confirmDelete = async () => {
+        if (!productToDelete) return
+
+        const id = productToDelete
+        console.log('✅ Delete confirmed via modal, deleting:', id)
 
         try {
             setDeleteLoading(id)
-            const { error } = await supabase
-                .from('products')
-                .delete()
-                .eq('id', id)
+            const { error } = await deleteProduct(id)
 
-            if (error) throw error
+            if (error) throw new Error(error)
 
-            // Refresh list
             refetch()
+            setProductToDelete(null)
         } catch (err: any) {
+            console.error('❌ Error during deletion:', err)
             alert('Erreur lors de la suppression: ' + err.message)
         } finally {
             setDeleteLoading(null)
@@ -35,8 +36,66 @@ export default function Products() {
 
     return (
         <div className="dashboard-container">
+            {productToDelete && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        background: 'white',
+                        padding: '30px',
+                        borderRadius: '16px',
+                        border: '2px solid #191A23',
+                        boxShadow: '8px 8px 0px #191A23',
+                        maxWidth: '400px',
+                        width: '90%'
+                    }}>
+                        <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>Confirmer la suppression ?</h3>
+                        <p style={{ marginBottom: '24px', color: '#666' }}>Cette action est irréversible. Voulez-vous vraiment supprimer ce produit ?</p>
+                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                            <button
+                                onClick={() => setProductToDelete(null)}
+                                style={{
+                                    padding: '10px 20px',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e5e7eb',
+                                    background: 'white',
+                                    fontWeight: 600,
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                style={{
+                                    padding: '10px 20px',
+                                    borderRadius: '8px',
+                                    border: '2px solid #ef4444',
+                                    background: '#ef4444',
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    boxShadow: '2px 2px 0px #191A23'
+                                }}
+                            >
+                                {deleteLoading === productToDelete ? 'Suppression...' : 'Supprimer'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="section-header">
-                <h2 className="section-title">Produits ({products.length})</h2>
+                <h2 className="admin-section-title">Produits ({products.length})</h2>
                 <Link to="/admin/products/new" className="view-all" style={{ background: '#191A23', color: '#fff' }}>
                     + Ajouter un produit
                 </Link>
@@ -110,12 +169,11 @@ export default function Products() {
                                                 ✏️
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(product.id)}
-                                                disabled={deleteLoading === product.id}
+                                                onClick={() => setProductToDelete(product.id)}
                                                 style={{ padding: '6px', border: '1px solid #fee2e2', borderRadius: '6px', cursor: 'pointer', background: '#fff5f5', color: '#ef4444' }}
                                                 title="Supprimer"
                                             >
-                                                {deleteLoading === product.id ? '...' : '🗑️'}
+                                                🗑️
                                             </button>
                                         </div>
                                     </td>

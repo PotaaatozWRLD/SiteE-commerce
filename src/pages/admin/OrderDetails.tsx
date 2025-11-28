@@ -90,7 +90,7 @@ export default function OrderDetails() {
                     >
                         ←
                     </button>
-                    <h2 className="section-title">Commande #{order.id.slice(0, 8)}</h2>
+                    <h2 className="admin-section-title">Commande #{order.id.slice(0, 8)}</h2>
                     <span className={`status-badge ${order.status}`} style={{ fontSize: '14px', padding: '6px 12px' }}>
                         {order.status}
                     </span>

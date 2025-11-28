@@ -108,7 +108,7 @@ export default function Dashboard() {
             {/* Recent Orders Table */}
             <div className="recent-orders">
                 <div className="section-header">
-                    <h2 className="section-title">Commandes Récentes</h2>
+                    <h2 className="admin-section-title">Commandes Récentes</h2>
                     <Link to="/admin/orders" className="view-all">Voir tout</Link>
                 </div>
                 <div className="table-container">
