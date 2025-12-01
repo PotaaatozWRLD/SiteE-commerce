@@ -55,33 +55,32 @@ export default function Footer() {
                         <div className="footer-column">
                             <h4 className="footer-title">Boutique</h4>
                             <ul className="footer-list">
-                                <li><a href="#" className="footer-link">Tous les produits</a></li>
-                                <li><a href="#" className="footer-link">Tapis de prière</a></li>
-                                <li><a href="#" className="footer-link">Livres & Coran</a></li>
-                                <li><a href="#" className="footer-link">Vêtements</a></li>
-                                <li><a href="#" className="footer-link">Parfums</a></li>
+                                <li><Link to="/" className="footer-link">Tous les produits</Link></li>
+                                <li><Link to="/?category=tapis-de-priere" className="footer-link">Tapis de prière</Link></li>
+                                <li><Link to="/?category=livres" className="footer-link">Livres & Coran</Link></li>
+                                <li><Link to="/?category=vetements" className="footer-link">Vêtements</Link></li>
+                                <li><Link to="/?category=parfums" className="footer-link">Parfums</Link></li>
                             </ul>
                         </div>
 
                         <div className="footer-column">
                             <h4 className="footer-title">Informations</h4>
                             <ul className="footer-list">
-                                <li><a href="#" className="footer-link">À propos</a></li>
-                                <li><a href="#" className="footer-link">Contact</a></li>
-                                <li><a href="#" className="footer-link">Blog</a></li>
-                                <li><a href="#" className="footer-link">FAQ</a></li>
-                                <li><a href="#" className="footer-link">Livraison</a></li>
+                                <li><Link to="/about" className="footer-link">À propos</Link></li>
+                                <li><Link to="/contact" className="footer-link">Contact</Link></li>
+                                <li><Link to="/blog" className="footer-link">Blog</Link></li>
+                                <li><Link to="/faq" className="footer-link">FAQ</Link></li>
+                                <li><Link to="/shipping" className="footer-link">Livraison</Link></li>
                             </ul>
                         </div>
 
                         <div className="footer-column">
                             <h4 className="footer-title">Légal</h4>
                             <ul className="footer-list">
-                                <li><a href="#" className="footer-link">Mentions légales</a></li>
-                                <li><a href="#" className="footer-link">CGV</a></li>
-                                <li><a href="#" className="footer-link">Confidentialité</a></li>
+                                <li><Link to="/legal" className="footer-link">Mentions légales</Link></li>
+                                <li><Link to="/terms" className="footer-link">CGV</Link></li>
+                                <li><Link to="/privacy" className="footer-link">Confidentialité</Link></li>
                                 <li><a href="#" className="footer-link">Cookies</a></li>
-                                <li><a href="#" className="footer-link">Retours</a></li>
                                 <li><Link to="/admin/login" className="footer-link" style={{ opacity: 0.5, fontSize: '14px' }}>Administration</Link></li>
                             </ul>
                         </div>

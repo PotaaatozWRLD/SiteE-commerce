@@ -22,8 +22,10 @@ export default function ProductForm() {
         original_price: '',
         stock: '',
         category_id: '',
-        image_url: '', // For now simple text input for emoji or URL
-        badge: ''
+        image_url: '',
+        badge: '',
+        supplier_url: '',
+        cost_price: ''
     })
 
     useEffect(() => {
@@ -34,21 +36,27 @@ export default function ProductForm() {
     useEffect(() => {
         if (product) {
             setFormData({
-                name: product.name,
+                name: product.name || '',
                 description: product.description || '',
-                price: product.price.toString(),
+                price: product.price?.toString() || '',
                 original_price: product.original_price?.toString() || '',
-                stock: product.stock.toString(),
+                stock: product.stock?.toString() || '',
                 category_id: product.category_id || '',
                 image_url: product.image_url || '',
-                badge: product.badge || ''
+                badge: product.badge || '',
+                supplier_url: product.supplier_url || '',
+                cost_price: product.cost_price?.toString() || ''
             })
         }
     }, [product])
 
     async function fetchCategories() {
-        const { data } = await supabase.from('categories').select('*')
-        if (data) setCategories(data)
+        try {
+            const { data } = await supabase.from('categories').select('*')
+            if (data) setCategories(data)
+        } catch (error) {
+            console.error('Error fetching categories:', error)
+        }
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -66,6 +74,8 @@ export default function ProductForm() {
                 category_id: formData.category_id,
                 image_url: formData.image_url,
                 badge: formData.badge || null,
+                supplier_url: formData.supplier_url || null,
+                cost_price: formData.cost_price ? parseFloat(formData.cost_price) : null,
                 is_active: true
             }
 
@@ -91,7 +101,17 @@ export default function ProductForm() {
         setFormData(prev => ({ ...prev, [name]: value }))
     }
 
-    if (fetchLoading) return <div className="p-8">Chargement...</div>
+    // Helper to safely calculate margin
+    const calculateMargin = () => {
+        const price = parseFloat(formData.price) || 0
+        const cost = parseFloat(formData.cost_price) || 0
+        return (price - cost).toFixed(2)
+    }
+
+    const margin = calculateMargin()
+    const isPositiveMargin = parseFloat(margin) > 0
+
+    if (fetchLoading) return <div className="admin-container">Chargement...</div>
 
     return (
         <div className="dashboard-container" style={{ maxWidth: '800px' }}>
@@ -205,6 +225,49 @@ export default function ProductForm() {
                             rows={4}
                             style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '16px', fontFamily: 'inherit' }}
                         />
+                    </div>
+
+                    <div style={{ borderTop: '1px solid #eee', margin: '20px 0' }}></div>
+                    <h3 style={{ fontSize: '18px', marginBottom: '15px' }}>📦 Dropshipping (Optionnel)</h3>
+
+                    <div className="form-group">
+                        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Lien Fournisseur (AliExpress/Temu)</label>
+                        <input
+                            type="url"
+                            name="supplier_url"
+                            value={formData.supplier_url}
+                            onChange={handleChange}
+                            placeholder="https://fr.aliexpress.com/item/..."
+                            style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '16px' }}
+                        />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                        <div className="form-group">
+                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Prix d'achat (€)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                name="cost_price"
+                                value={formData.cost_price}
+                                onChange={handleChange}
+                                placeholder="0.00"
+                                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '16px' }}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Marge estimée</label>
+                            <div style={{
+                                padding: '12px',
+                                borderRadius: '8px',
+                                background: '#f3f4f6',
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                color: isPositiveMargin ? '#10B981' : '#EF4444'
+                            }}>
+                                {margin} €
+                            </div>
+                        </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>

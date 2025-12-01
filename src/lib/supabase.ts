@@ -28,6 +28,8 @@ export interface Product {
     created_at: string
     updated_at: string
     category?: Category
+    supplier_url?: string | null
+    cost_price?: number | null
 }
 
 export interface Category {

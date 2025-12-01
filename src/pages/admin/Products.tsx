@@ -160,7 +160,7 @@ export default function Products() {
                                     <td>
                                         <div style={{ display: 'flex', gap: '8px' }}>
                                             <button
-                                                onClick={() => navigate(`/admin/products/${product.id}`)}
+                                                onClick={() => navigate(`/admin/products/edit/${product.id}`)}
                                                 style={{ padding: '6px', border: '1px solid #e5e7eb', borderRadius: '6px', cursor: 'pointer', background: '#fff' }}
                                                 title="Modifier"
                                             >

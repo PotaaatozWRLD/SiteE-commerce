@@ -1,0 +1,146 @@
+.account-layout {
+    padding-top: 100px;
+    padding-bottom: 60px;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+.account-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+}
+
+/* Sidebar */
+.account-sidebar {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    height: fit-content;
+    border: 1px solid #e5e7eb;
+}
+
+.user-profile-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dark);
+    margin: 0 0 4px 0;
+}
+
+.profile-email {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.account-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.account-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: #4b5563;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 16px;
+}
+
+.account-nav-link:hover {
+    background-color: #f3f4f6;
+    color: var(--dark);
+}
+
+.account-nav-link.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.account-nav-link.logout {
+    color: #ef4444;
+    margin-top: 10px;
+}
+
+.account-nav-link.logout:hover {
+    background-color: #fef2f2;
+}
+
+/* Content */
+.account-content {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    border: 1px solid #e5e7eb;
+    min-height: 500px;
+}
+
+.account-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+@media (max-width: 900px) {
+    .account-container {
+        grid-template-columns: 1fr;
+    }
+
+    .account-sidebar {
+        padding: 20px;
+    }
+
+    .user-profile-summary {
+        flex-direction: row;
+        text-align: left;
+        gap: 20px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        margin-bottom: 0;
+    }
+}

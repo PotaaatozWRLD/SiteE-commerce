@@ -1,14 +1,15 @@
-import { useState, FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../contexts/AuthContext'
-import './AdminLogin.css'
+import { useState, type FormEvent } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import './admin/AdminLogin.css' // Reuse the same styles for consistency
 
-export default function AdminLogin() {
+export default function Register() {
+    const [fullName, setFullName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    const { signIn, signOut } = useAuth()
+    const { signUp } = useAuth()
     const navigate = useNavigate()
 
     async function handleSubmit(e: FormEvent) {
@@ -16,24 +17,16 @@ export default function AdminLogin() {
         setError('')
         setLoading(true)
 
-        const { data: profile, error: signInError } = await signIn(email, password)
+        const { error: signUpError } = await signUp(email, password, fullName)
 
-        if (signInError) {
-            setError('Email ou mot de passe incorrect')
+        if (signUpError) {
+            setError(signUpError.message || 'Une erreur est survenue lors de l\'inscription')
             setLoading(false)
             return
         }
 
-        // Block non-admin access
-        if (profile?.role !== 'admin') {
-            await signOut()
-            setError('Accès refusé. Ce compte n\'a pas les droits d\'administration.')
-            setLoading(false)
-            return
-        }
-
-        // Redirect to admin dashboard
-        navigate('/admin')
+        // Redirect to homepage or profile
+        navigate('/')
     }
 
     return (
@@ -51,8 +44,8 @@ export default function AdminLogin() {
                 <div className="login-logo">
                     Islamic<span className="logo-accent">Shop</span>
                 </div>
-                <h1 className="login-title">Dashboard Admin</h1>
-                <p className="login-subtitle">Connectez-vous pour accéder à l'administration</p>
+                <h1 className="login-title">Créer un compte</h1>
+                <p className="login-subtitle">Rejoignez notre communauté</p>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="login-form">
@@ -68,6 +61,27 @@ export default function AdminLogin() {
                     )}
 
                     <div className="form-group">
+                        <label htmlFor="fullName" className="form-label">
+                            Nom complet
+                        </label>
+                        <div className="input-wrapper">
+                            <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <input
+                                id="fullName"
+                                type="text"
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
+                                placeholder="Votre nom"
+                                className="form-input"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-group">
                         <label htmlFor="email" className="form-label">
                             Email
                         </label>
@@ -81,7 +95,7 @@ export default function AdminLogin() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="admin@islamicshop.com"
+                                placeholder="votre@email.com"
                                 className="form-input"
                                 required
                             />
@@ -105,6 +119,7 @@ export default function AdminLogin() {
                                 placeholder="••••••••"
                                 className="form-input"
                                 required
+                                minLength={6}
                             />
                         </div>
                     </div>
@@ -117,27 +132,35 @@ export default function AdminLogin() {
                         {loading ? (
                             <span className="button-loading">
                                 <span className="spinner-small"></span>
-                                Connexion...
+                                Inscription...
                             </span>
                         ) : (
                             <>
-                                <span>Se connecter</span>
+                                <span>S'inscrire</span>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                                    <line x1="23" y1="11" x2="17" y2="11"></line>
                                 </svg>
                             </>
                         )}
                     </button>
                 </form>
 
+                {/* Login Link */}
+                <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px' }}>
+                    Déjà un compte ? <Link to="/login" style={{ color: 'var(--dark)', fontWeight: 600 }}>Se connecter</Link>
+                </div>
+
                 {/* Back to site */}
                 <div className="login-footer">
-                    <a href="/" className="back-link">
+                    <Link to="/" className="back-link">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M19 12H5M12 19l-7-7 7-7" />
                         </svg>
                         Retour au site
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

@@ -8,7 +8,8 @@ interface AuthContextType {
     profile: Profile | null
     isAdmin: boolean
     loading: boolean
-    signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+    signIn: (email: string, password: string) => Promise<{ data: Profile | null, error: Error | null }>
+    signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>
     signOut: () => Promise<void>
 }
 
@@ -67,8 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (error) throw error
             setProfile(data)
+            return data
         } catch (error) {
             console.error('Error fetching profile:', error)
+            return null
         } finally {
             setLoading(false)
         }
@@ -83,7 +86,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (error) throw error
 
+            let profileData = null
             // Fetch profile to check role
+            if (data.user) {
+                profileData = await fetchProfile(data.user.id)
+            }
+
+            return { data: profileData, error: null }
+        } catch (error) {
+            return { data: null, error: error as Error }
+        }
+    }
+
+    async function signUp(email: string, password: string, fullName: string) {
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                    },
+                },
+            })
+
+            if (error) throw error
+
+            // If auto-confirm is enabled, user might be logged in immediately
             if (data.user) {
                 await fetchProfile(data.user.id)
             }
@@ -110,6 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 isAdmin,
                 loading,
                 signIn,
+                signUp,
                 signOut,
             }}
         >

@@ -10,6 +10,7 @@ interface OrderItem {
     product: {
         name: string
         image_url: string
+        supplier_url?: string
     }
 }
 
@@ -54,7 +55,7 @@ export default function OrderDetails() {
                 .from('order_items')
                 .select(`
                     *,
-                    product:products(name, image_url)
+                    product:products(name, image_url, supplier_url)
                 `)
                 .eq('order_id', id)
 
@@ -154,6 +155,25 @@ export default function OrderDetails() {
                                 <div style={{ flex: 1 }}>
                                     <div style={{ fontWeight: 'bold' }}>{item.product?.name || 'Produit supprimé'}</div>
                                     <div style={{ color: '#666' }}>Qté: {item.quantity} x {item.price_at_purchase} €</div>
+                                    {item.product?.supplier_url && (
+                                        <a
+                                            href={item.product.supplier_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                display: 'inline-block',
+                                                marginTop: '4px',
+                                                fontSize: '12px',
+                                                color: '#2563EB',
+                                                textDecoration: 'none',
+                                                border: '1px solid #2563EB',
+                                                padding: '2px 6px',
+                                                borderRadius: '4px'
+                                            }}
+                                        >
+                                            ↗ Commander Fournisseur
+                                        </a>
+                                    )}
                                 </div>
                                 <div style={{ fontWeight: 'bold' }}>
                                     {(item.quantity * item.price_at_purchase).toFixed(2)} €

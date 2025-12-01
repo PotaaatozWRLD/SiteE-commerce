@@ -8,7 +8,7 @@ export default function Login() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    const { signIn } = useAuth()
+    const { signIn, signOut } = useAuth()
     const navigate = useNavigate()
 
     async function handleSubmit(e: FormEvent) {
@@ -16,10 +16,18 @@ export default function Login() {
         setError('')
         setLoading(true)
 
-        const { error: signInError } = await signIn(email, password)
+        const { data: profile, error: signInError } = await signIn(email, password)
 
         if (signInError) {
             setError('Email ou mot de passe incorrect')
+            setLoading(false)
+            return
+        }
+
+        // Check if user is admin
+        if (profile?.role === 'admin') {
+            await signOut()
+            setError('Compte administrateur détecté. Veuillez vous connecter sur l\'espace admin.')
             setLoading(false)
             return
         }

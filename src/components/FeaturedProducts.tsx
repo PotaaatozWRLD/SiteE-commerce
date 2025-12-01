@@ -2,8 +2,12 @@ import './FeaturedProducts.css';
 import ProductCard from './ProductCard';
 import { useProducts } from '../hooks/useProducts';
 
+import { useSearchParams } from 'react-router-dom';
+
 export default function FeaturedProducts() {
-    const { products, loading, error } = useProducts(6); // Limit to 6 products
+    const [searchParams] = useSearchParams();
+    const categorySlug = searchParams.get('category') || undefined;
+    const { products, loading, error } = useProducts(categorySlug ? undefined : 6, categorySlug); // No limit if filtering by category
 
     if (error) {
         return (
@@ -27,7 +31,11 @@ export default function FeaturedProducts() {
                         <span>Nos Produits Phares</span>
                     </div>
                     <h2 className="section-title">
-                        Articles les plus <span className="gradient-text">populaires</span>
+                        {categorySlug ? (
+                            <>Produits : <span className="gradient-text">{categorySlug.replace(/-/g, ' ')}</span></>
+                        ) : (
+                            <>Articles les plus <span className="gradient-text">populaires</span></>
+                        )}
                     </h2>
                     <p className="section-description">
                         Découvrez notre sélection de produits islamiques de qualité,

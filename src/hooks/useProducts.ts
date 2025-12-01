@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase, type Product } from '../lib/supabase'
 
-export function useProducts(limit?: number) {
+export function useProducts(limit?: number, categorySlug?: string) {
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -11,9 +11,14 @@ export function useProducts(limit?: number) {
             setLoading(true)
             let query = supabase
                 .from('products')
-                .select('*, category:categories(*)')
+                .select('*, category:categories!inner(*)') // !inner is important for filtering by joined table
                 .eq('is_active', true)
                 .order('created_at', { ascending: false })
+
+            if (categorySlug) {
+                // Filter by category slug
+                query = query.eq('category.slug', categorySlug)
+            }
 
             if (limit) {
                 query = query.limit(limit)
@@ -30,7 +35,7 @@ export function useProducts(limit?: number) {
         } finally {
             setLoading(false)
         }
-    }, [limit])
+    }, [limit, categorySlug])
 
     useEffect(() => {
         fetchProducts()
