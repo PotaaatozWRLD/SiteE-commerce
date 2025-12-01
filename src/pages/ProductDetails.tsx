@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useProducts } from '../hooks/useProducts'
+import { useCart } from '../contexts/CartContext'
 import './ProductDetails.css'
 
 export default function ProductDetails() {
@@ -11,6 +12,7 @@ export default function ProductDetails() {
 
     // Find product by ID (in a real app with many products, we would fetch by ID from DB)
     const product = products.find(p => p.id === id)
+    const { addItem } = useCart()
 
     // Scroll to top on mount
     useEffect(() => {
@@ -54,9 +56,9 @@ export default function ProductDetails() {
     }
 
     const handleAddToCart = () => {
-        console.log('Added to cart:', { ...product, quantity })
-        // TODO: Implement cart context
-        alert(`Ajouté au panier : ${quantity} x ${product.name}`)
+        if (product) {
+            addItem(product, quantity)
+        }
     }
 
     return (

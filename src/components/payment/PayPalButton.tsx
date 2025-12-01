@@ -17,7 +17,7 @@ export default function PayPalPayment({ amount, onSuccess }: PayPalButtonProps) 
             }}>
                 <PayPalButtons
                     style={{ layout: "vertical", shape: "rect", borderRadius: 10 }}
-                    createOrder={(data, actions) => {
+                    createOrder={(_data, actions) => {
                         return actions.order.create({
                             purchase_units: [
                                 {
@@ -30,7 +30,7 @@ export default function PayPalPayment({ amount, onSuccess }: PayPalButtonProps) 
                             intent: "CAPTURE"
                         })
                     }}
-                    onApprove={async (data, actions) => {
+                    onApprove={async (_data, actions) => {
                         if (actions.order) {
                             const details = await actions.order.capture()
                             onSuccess(details)

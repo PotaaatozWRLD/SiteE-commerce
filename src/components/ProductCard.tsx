@@ -37,7 +37,7 @@ export default function ProductCard({
             id,
             name,
             price,
-            original_price: originalPrice,
+            original_price: originalPrice || null,
             image_url: image,
             slug: '',
             description: null,
@@ -45,9 +45,11 @@ export default function ProductCard({
             stock: 0,
             rating: 0,
             reviews_count: 0,
-            badge,
+            badge: badge || null,
             is_active: true,
             created_at: '',
+            updated_at: '',
+            images: null,
             category: undefined
         };
 
