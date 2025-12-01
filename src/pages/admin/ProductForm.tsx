@@ -90,7 +90,7 @@ export default function ProductForm() {
             navigate('/admin/products')
         } catch (error: any) {
             console.error('Error saving product:', error)
-            alert('Erreur lors de la sauvegarde: ' + error.message)
+            // alert('Erreur lors de la sauvegarde: ' + error.message) // Commented out or removed for production
         } finally {
             setLoading(false)
         }

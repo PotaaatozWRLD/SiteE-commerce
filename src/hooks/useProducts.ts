@@ -97,7 +97,7 @@ export async function createProduct(productData: Omit<Product, 'id' | 'created_a
         if (error) throw error
         return { data, error: null }
     } catch (err) {
-        console.error('Error creating product:', JSON.stringify(err, null, 2))
+        console.error('Error creating product:', err)
         return { data: null, error: err instanceof Error ? err.message : 'Erreur création produit' }
     }
 }
