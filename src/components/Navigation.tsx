@@ -70,7 +70,14 @@ export default function Navigation() {
                                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                             >
                                 <div className="user-avatar">
-                                    {profile?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                                    {profile?.avatar_url ? (
+                                        <img src={profile.avatar_url} alt="Avatar" className="user-avatar-img" />
+                                    ) : (
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    )}
                                 </div>
                                 <span className="user-name">{profile?.full_name || 'Mon Compte'}</span>
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: isUserMenuOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>

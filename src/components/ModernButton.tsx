@@ -25,3 +25,19 @@ export function SecondaryButton({ children, onClick }: { children: React.ReactNo
         </button>
     );
 }
+
+interface ModernButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: 'primary' | 'secondary';
+    children: React.ReactNode;
+}
+
+const ModernButton: React.FC<ModernButtonProps> = ({ variant = 'primary', children, className = '', ...props }) => {
+    const baseClass = variant === 'primary' ? 'login-button' : 'secondary-button';
+    return (
+        <button className={`${baseClass} ${className}`} {...props}>
+            {children}
+        </button>
+    );
+};
+
+export default ModernButton;

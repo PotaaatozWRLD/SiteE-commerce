@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { supabase } from '../lib/supabase'
 
 export default function Contact() {
     const [formData, setFormData] = useState({
@@ -7,12 +8,30 @@ export default function Contact() {
         message: ''
     })
     const [submitted, setSubmitted] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        // Simulate form submission
-        console.log('Contact form submitted:', formData)
-        setSubmitted(true)
+        setLoading(true)
+        setError(null)
+
+        try {
+            const { error } = await supabase.functions.invoke('send-contact-email', {
+                body: formData
+            })
+
+            if (error) throw error
+
+            console.log('Email sent successfully')
+            setSubmitted(true)
+            setFormData({ name: '', email: '', message: '' })
+        } catch (err: any) {
+            console.error('Error sending email:', err)
+            setError("Une erreur est survenue lors de l'envoi du message. Veuillez réessayer.")
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -50,6 +69,12 @@ export default function Contact() {
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        {error && (
+                            <div style={{ padding: '10px', background: '#fee2e2', color: '#991b1b', borderRadius: '6px' }}>
+                                {error}
+                            </div>
+                        )}
+
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Nom</label>
                             <input
@@ -104,20 +129,44 @@ export default function Contact() {
 
                         <button
                             type="submit"
+                            disabled={loading}
                             style={{
                                 padding: '14px',
-                                background: '#191A23',
+                                background: loading ? '#9ca3af' : '#191A23',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '8px',
                                 fontSize: '16px',
                                 fontWeight: 600,
-                                cursor: 'pointer',
-                                transition: 'opacity 0.2s'
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                transition: 'opacity 0.2s',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '10px'
                             }}
                         >
-                            Envoyer le message
+                            {loading ? (
+                                <>
+                                    <span style={{
+                                        width: '16px',
+                                        height: '16px',
+                                        border: '2px solid white',
+                                        borderBottomColor: 'transparent',
+                                        borderRadius: '50%',
+                                        display: 'inline-block',
+                                        animation: 'spin 1s linear infinite'
+                                    }}></span>
+                                    Envoi en cours...
+                                </>
+                            ) : 'Envoyer le message'}
                         </button>
+                        <style>{`
+                            @keyframes spin {
+                                0% { transform: rotate(0deg); }
+                                100% { transform: rotate(360deg); }
+                            }
+                        `}</style>
                     </form>
                 )}
             </div>

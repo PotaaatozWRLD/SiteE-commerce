@@ -1,0 +1,352 @@
+/* Service Cards Section */
+.service-cards-section {
+    padding: 4rem 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.service-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .service-cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Card Styles */
+.service-card {
+    padding: 2.5rem;
+    border-radius: 45px;
+    border: 1px solid var(--dark);
+    box-shadow: 0 5px 0 var(--dark);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 0 var(--dark);
+}
+
+/* Variants */
+.service-card.card-white {
+    background-color: var(--white);
+    color: var(--dark);
+}
+
+.service-card.card-green {
+    background-color: var(--green);
+    color: var(--dark);
+}
+
+.service-card.card-dark {
+    background-color: var(--dark);
+    color: var(--white);
+}
+
+/* Card Content */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.card-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* Icon Colors based on Card Variant */
+.card-white .card-icon-wrapper {
+    background-color: var(--green);
+    color: var(--dark);
+}
+
+.card-green .card-icon-wrapper {
+    background-color: var(--white);
+    color: var(--dark);
+}
+
+.card-dark .card-icon-wrapper {
+    background-color: var(--white);
+    color: var(--dark);
+}
+
+.service-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Variant specific text colors if needed */
+.card-dark h3 {
+    color: var(--white);
+}
+
+.service-card p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.card-white p,
+.card-green p {
+    color: var(--dark);
+}
+
+.card-dark p {
+    color: #e0e0e0;
+}
+
+/* Learn More Link */
+.card-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    margin-top: auto;
+    width: fit-content;
+}
+
+.card-white .card-link,
+.card-green .card-link {
+    color: var(--dark);
+}
+
+.card-dark .card-link {
+    color: var(--white);
+}
+
+.card-link-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.card-white .card-link-icon,
+.card-green .card-link-icon {
+    background-color: var(--dark);
+    color: var(--green);
+}
+
+.card-dark .card-link-icon {
+    background-color: var(--white);
+    color: var(--dark);
+}
+
+.card-link:hover .card-link-icon {
+    transform: rotate(45deg);
+}
+
+/* Modal Styles */
+.service-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.service-modal-content {
+    background: var(--white);
+    padding: 2rem;
+    /* Reduced padding */
+    border-radius: 30px;
+    max-width: 700px;
+    /* Wider to allow 2 columns */
+    width: 95%;
+    max-height: 95vh;
+    /* Maximize height usage */
+    overflow-y: auto;
+    /* Keep as fallback */
+    position: relative;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--dark);
+    animation: slideUp 0.3s ease;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dark) var(--grey);
+}
+
+@media (max-width: 480px) {
+    .service-modal-content {
+        padding: 1.5rem;
+        border-radius: 20px;
+    }
+
+    .service-modal-content h2 {
+        font-size: 1.5rem;
+    }
+}
+
+.service-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dark);
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.service-modal-close:hover {
+    background-color: var(--grey);
+}
+
+.modal-icon-wrapper {
+    width: 60px;
+    /* Smaller icon */
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    /* Reduced margin */
+    font-size: 1.5rem;
+    color: var(--dark);
+}
+
+.modal-icon-wrapper.variant-white {
+    background-color: var(--green);
+}
+
+.modal-icon-wrapper.variant-green {
+    background-color: var(--white);
+    border: 1px solid var(--dark);
+}
+
+.modal-icon-wrapper.variant-dark {
+    background-color: var(--dark);
+    color: var(--white);
+}
+
+.service-modal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    /* Reduced margin */
+    color: var(--dark);
+}
+
+.service-modal-content p {
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.modal-extra-info {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Modal Details List */
+.modal-details-list {
+    text-align: left;
+    margin: 1rem 0;
+    background: var(--grey);
+    padding: 1.5rem;
+    border-radius: 20px;
+}
+
+.modal-details-list h3 {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    color: var(--dark);
+    text-align: center;
+}
+
+.modal-details-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 2 columns layout */
+    gap: 0.8rem 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .modal-details-list ul {
+        grid-template-columns: 1fr;
+        /* Back to 1 column on mobile */
+        gap: 0.5rem;
+    }
+}
+
+.modal-details-list li {
+    position: relative;
+    padding-left: 1.2rem;
+    margin-bottom: 0;
+    /* Handled by grid gap */
+    color: #4b5563;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.modal-details-list li::before {
+    content: "•";
+    color: var(--green);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+}

@@ -1,14 +1,42 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 import './Footer.css';
 
 export default function Footer() {
     const [email, setEmail] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [message, setMessage] = useState('');
 
-    const handleNewsletterSubmit = (e: React.FormEvent) => {
+    const handleNewsletterSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Newsletter signup:', email);
-        setEmail('');
+        setStatus('loading');
+
+        try {
+            const { error } = await supabase
+                .from('newsletter_subscribers')
+                .insert([{ email }]);
+
+            if (error) {
+                if (error.code === '23505') { // Unique violation
+                    throw new Error('Vous êtes déjà inscrit !');
+                }
+                throw error;
+            }
+
+            setStatus('success');
+            setMessage('Merci ! Vous êtes inscrit.');
+            setEmail('');
+        } catch (error: any) {
+            console.error('Error subscribing:', error);
+            setStatus('error');
+            setMessage(error.message || "Une erreur est survenue.");
+        } finally {
+            setTimeout(() => {
+                setStatus('idle');
+                setMessage('');
+            }, 3000);
+        }
     };
 
     return (
@@ -101,13 +129,29 @@ export default function Footer() {
                                     placeholder="Votre email"
                                     className="newsletter-input"
                                     required
+                                    disabled={status === 'loading' || status === 'success'}
                                 />
-                                <button type="submit" className="newsletter-btn">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M5 12h14M12 5l7 7-7 7" />
-                                    </svg>
+                                <button
+                                    type="submit"
+                                    className="newsletter-btn"
+                                    disabled={status === 'loading' || status === 'success'}
+                                >
+                                    {status === 'loading' ? '...' : (
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
+                                    )}
                                 </button>
                             </div>
+                            {message && (
+                                <p style={{
+                                    marginTop: '10px',
+                                    fontSize: '14px',
+                                    color: status === 'error' ? '#ef4444' : '#22c55e'
+                                }}>
+                                    {message}
+                                </p>
+                            )}
                         </form>
                     </div>
                 </div>
